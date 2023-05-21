@@ -50,9 +50,9 @@
                     @forelse ($meja as $item)
                         <tr>
                             <td>
-                                <div class="showQR" >
+                                <div class="showQR" onclick="handleModalQR('{!! base64_encode(QrCode::format('png')->size(340)->generate(url($store->uuid."?meja=".$item->nomor_meja))) !!}', '{{$item->nomor_meja}}')">
                                     {{-- {!! QrCode::size(60)->generate(url($store->uuid."?meja=".$item->nomor_meja)); !!} --}}
-                                   <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(100)->generate('Make me into an QrCode!')) !!} ">
+                                   <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(60)->generate(url($store->uuid."?meja=".$item->nomor_meja))) !!} ">
                                 </div>
                             </td>
                             <td>{{$item->nomor_meja}}</td>
@@ -84,6 +84,26 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalDownloadQR" tabindex="-1" aria-labelledby="modalDownloadQRLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalDownloadQRLabel">Download QR Code</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <a href="" download="" class="tag_download">
+            <img src="" alt="" class="img-fluid" id="download_qr">
+            <p class="mt-2">Klik untuk simpan QR Code</p>
+        </a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="button_download">Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 @endsection
 
@@ -112,6 +132,23 @@
 
         });
 
+        const modalDownloadQR = new bootstrap.Modal('#modalDownloadQR', {
+            keyboard: false
+        })
+        function handleModalQR(param, meja){
+            console.log('param', param)
+            $("#modalDownloadQR img").attr("src", `data:image/png;base64, ${param}`);
+            $("#modalDownloadQR a").attr("href", `data:image/png;base64, ${param}`);
+            $("#modalDownloadQR a").attr("download", `QR Meja ${meja}.png`);
+            modalDownloadQR.show();
+        }
+
+        $("#button_download").on("click", function(){
+            $(".tag_download img").click();
+            console.log('====================================');
+            console.log("CLICK");
+            console.log('====================================');
+        });
 
     </script>
 @endpush
