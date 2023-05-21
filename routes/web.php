@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminStoreController;
+use App\Http\Controllers\Admin\MejaController;
+use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProdukController;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +20,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index']);
 Route::resource('produk', ProdukController::class);
+
+Route::prefix('admin')->middleware('auth')->group(function(){
+    Route::resource("admin-store", AdminStoreController::class);
+    Route::resource("store", StoreController::class);
+    Route::resource("store-meja", MejaController::class);
+});
 
 Route::middleware([
     'auth:sanctum',
