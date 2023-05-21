@@ -1,88 +1,126 @@
 @extends('layouts.admin')
 
 @section('title')
-     Meja {{$store->name}}
+     Admin Produk
 @endsection
 
+@push('addStyle')
+    <style>
+        .img__produk{
+            width: 66px;
+            height: auto;
+            border-radius: 4px;
+        }
+    </style>
+@endpush
+
 @section('content')
-<!-- Modal -->
-<div class="modal fade" id="tambahMeja" tabindex="-1" aria-labelledby="tambahMejaLabel" aria-hidden="true">
+
+{{-- tambah produk  --}}
+<div class="modal fade" id="tambahProduk" tabindex="-1" aria-labelledby="tambahProdukLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="tambahMejaLabel">Tambah meja</h5>
+        <h5 class="modal-title" id="tambahProdukLabel">Tambah Produk</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{{route('store-meja.store')}}" method="post">
-      @csrf
+      <form action="{{route('admin-produk.store')}}" method="post" enctype="multipart/form-data">
+        @csrf
         <div class="modal-body">
-            <label for="">Nomor/Nama Meja</label>
-            <input type="text" class="form-control mb-3" name="nomor_meja" required id="nomor_meja">
-            <input type="text" class="form-control mb-3" name="uuid_store" value="{{$store->uuid}}" hidden>
+          <label for="">Nama</label>
+          <input type="text" class="form-control mb-3" name="nama" required>
+
+          <div class="mb-3">
+              <label for="">Price</label>
+              <input type="number" class="form-control price" name="price" required>
+              <small>Rp. <span id="idr"></span></small>
+          </div>
+          <div class="mb-3">
+            <input type="file" class="form-control" name="image">
+            <small>Max 4mb</small>
+          </div>
+          <div class="">
+            <label for="">Pilih Kategori</label>
+            <select name="kategori_id" id="" class="form-select">
+                @forelse ($kategori as $item)
+                    <option value="{{$item->id}}">{{$item->name}}</option>
+                @empty
+                    <option value="">No Kategori</option>
+                @endforelse
+
+            </select>
+          </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
         </div>
 
       </form>
     </div>
   </div>
 </div>
-<div class="modal fade" id="updateMeja" tabindex="-1" aria-labelledby="updateMejaLabel" aria-hidden="true">
+{{-- tambah produk end --}}
+
+{{-- tambah Kategori  --}}
+<div class="modal fade" id="tambahKategori" tabindex="-1" aria-labelledby="tambahKategoriLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="updateMejaLabel">Tambah meja</h5>
+        <h5 class="modal-title" id="tambahKategoriLabel">Tambah Kategori</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{{route('store-meja.store')}}" id="form_update" method="post">
-      @csrf
-      @method("PUT")
+      <form action="{{route('createKategoriProduk')}}" method="post" enctype="multipart/form-data">
+        @csrf
         <div class="modal-body">
-            <label for="">Nomor/Nama Meja</label>
-            <input type="text" class="form-control mb-3" name="nomor_meja" required id="nomor_meja">
-            <input type="text" class="form-control mb-3" name="uuid_store" value="{{$store->uuid}}" hidden>
+          <label for="">Nama Kategori</label>
+          <input type="text" class="form-control mb-3" name="name" required>
+          <input type="text" class="form-control mb-3" name="vendor_uuid" hidden value="{{$vendor->uuid}}">
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
         </div>
 
       </form>
     </div>
   </div>
 </div>
+{{-- tambah Kategori end --}}
+
 <div class="card">
     <div class="card-body">
         <div class="row mb-3 justify-content-between">
-            <div class="col-md-4">
-                <div data-bs-toggle="modal" data-bs-target="#tambahMeja" href="{{route('store-meja.create')}}" class="btn btn-primary">Tambah Meja</div>
+            <div class="col-md-6">
+                <div data-bs-toggle="modal" data-bs-target="#tambahKategori" href="{{route('store-meja.create')}}" class="btn btn-warning me-3">Tambah Kategori</div>
+                <div  data-bs-toggle="modal" data-bs-target="#tambahProduk" href="{{route('store-meja.create')}}" class="btn btn-primary">Tambah Produk</div>
             </div>
         </div>
+
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
-                    <th scope="col">QR COde</th>
-                    <th scope="col">Nomor Meja</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Nama</th>
+                    <th scope="col">Kategori</th>
+                    <th scope="col">Price</th>
                     <th scope="col">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($meja as $item)
+                    @forelse ($produk as $item)
                         <tr>
                             <td>
-                                <div class="showQR" onclick="handleModalQR('{!! base64_encode(QrCode::format('png')->size(340)->generate(url($store->uuid."?meja=".$item->nomor_meja))) !!}', '{{$item->nomor_meja}}')">
-                                    {{-- {!! QrCode::size(60)->generate(url($store->uuid."?meja=".$item->nomor_meja)); !!} --}}
-                                   <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(60)->generate(url($store->uuid."?meja=".$item->nomor_meja))) !!} ">
-                                </div>
+                                <img src="{{$item->image}}" class="img-fluid img__produk" alt="">
                             </td>
-                            <td>{{$item->nomor_meja}}</td>
-                            <td>{{$item->status === 'active' ? "Active" : "In Active"}}</td>
                             <td>
-                                <form action="{{route('store-meja.destroy', $item->uuid)}}" method="post" id="form_delete_{{$item->id}}">
+                                {{$item->nama}}
+                            </td>
+                            <td>{{$item->kategori->name}}</td>
+                            <td>Rp {{number_format($item->price)}}</td>
+                            <td>
+                                <form action="{{route('admin-produk.destroy', $item->uuid)}}" method="post" id="form_delete_{{$item->id}}">
                                     @csrf
                                     @method("DELETE")
                                 </form>
@@ -156,30 +194,13 @@
 
         });
 
-        const modalDownloadQR = new bootstrap.Modal('#modalDownloadQR', {
-            keyboard: false
-        })
-        function handleModalQR(param, meja){
-            $("#modalDownloadQR img").attr("src", `data:image/png;base64, ${param}`);
-            $("#modalDownloadQR a").attr("href", `data:image/png;base64, ${param}`);
-            $("#modalDownloadQR a").attr("download", `QR {{$store->name}} Meja ${meja} - - {{now()}}.png`);
-            modalDownloadQR.show();
-        }
-
-        $("#button_download").on("click", function(){
-            $(".tag_download img").click();
+        $(".price").on("input", function(){
+            let value = parseInt($(".price").val());
+            if(value){
+                $("small #idr").text(value.toLocaleString())
+            }else{
+                $("small #idr").text(0)
+            }
         });
-
-        const modaUpdateData = new bootstrap.Modal('#updateMeja', {
-            keyboard: false
-        })
-
-        function handleUpdateData(param){
-            console.log('param', param)
-            $("#updateMeja #nomor_meja").val(param.nomor_meja);
-            $("#form_update").attr("action", "/admin/store-meja/"+param.id)
-            modaUpdateData.show();
-        }
-
     </script>
 @endpush

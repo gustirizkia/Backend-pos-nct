@@ -96,7 +96,16 @@ class MejaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nomor_meja' => 'required|string'
+        ]);
+
+        $update = Meja::where('id', $id)->update([
+            'nomor_meja' => $request->nomor_meja
+        ]);
+
+        return redirect()->back()->with('success', "Berhasil update data");
+
     }
 
     /**

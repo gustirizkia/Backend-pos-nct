@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminStoreController;
+use App\Http\Controllers\Admin\KategoriProdukController;
 use App\Http\Controllers\Admin\MejaController;
+use App\Http\Controllers\Admin\ProdukController as AdminProdukController;
 use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProdukController;
@@ -25,6 +27,9 @@ Route::prefix('admin')->middleware('auth')->group(function(){
     Route::resource("admin-store", AdminStoreController::class);
     Route::resource("store", StoreController::class);
     Route::resource("store-meja", MejaController::class);
+    Route::resource("admin-produk", AdminProdukController::class);
+
+    Route::post('createKategoriProduk', [KategoriProdukController::class, 'createKategoriProduk'])->name('createKategoriProduk');
 });
 
 Route::middleware([

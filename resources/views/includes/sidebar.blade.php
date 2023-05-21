@@ -43,12 +43,32 @@
                             <span>Admin Store</span>
                         </a>
                     </li>
-                    <li
-                        class="sidebar-item  {{request()->is('admin/produk*') ? 'active' : ''}}">
-                        <a href="{{route('admin-store.index')}}" class='sidebar-link'>
+                    {{-- <li
+                        class="sidebar-item  ">
+                        <a href="{{route('admin-produk.index')}}" class='sidebar-link'>
                             <i class="bi bi-egg-fried"></i>
                             <span>Produk</span>
                         </a>
+                    </li> --}}
+
+                    <li class="sidebar-item has-sub {{request()->is('admin/admin-produk*') ? 'active' : ''}}">
+                        <a href="#" class="sidebar-link">
+                            <i class="bi bi-menu-button-wide"></i>
+                            <span>Menu</span>
+                        </a>
+
+                        <ul class="submenu submenu-open {{request()->is('admin/admin-produk*') ? 'active' : ''}}" style="--submenu-height: 215px;">
+                            <li class="submenu-item {{request()->is('admin/admin-produk-kategori*') ? 'active' : ''}}">
+                                <a href="{{route('admin-produk.index')}}" class="submenu-link">
+                                    <span>Kategori</span>
+                                </a>
+                            </li>
+                            <li class="submenu-item {{request()->is('admin/admin-produk*') ? 'active' : ''}}">
+                                <a href="{{route('admin-produk.index')}}" class="submenu-link">
+                                    <span>Produk</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
 

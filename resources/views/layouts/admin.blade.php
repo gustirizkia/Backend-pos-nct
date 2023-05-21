@@ -68,6 +68,14 @@
             })
     </script>
 @endif
+@if (Session::has('error'))
+    <script>
+        Swal.fire({
+                text: "{{Session::get('error')}}",
+                icon: 'error',
+            })
+    </script>
+@endif
 
 <script>
     $("body").removeClass("theme-dark")
