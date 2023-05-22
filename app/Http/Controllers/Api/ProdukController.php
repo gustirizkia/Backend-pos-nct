@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\KategoriProduk;
 use App\Models\Meja;
 use App\Models\Product;
 use App\Models\VendorStore;
@@ -39,13 +40,13 @@ class ProdukController extends Controller
             ], 404);
         }
 
-        $kategoriStore =  DB::table('kategoris')->where('store_uuid', $request->store_id)->get()->pluck('id');
+        $kategoriStore =  KategoriProduk::where('vendor_uuid', $cekStore->uuid_vendor)->get()->pluck('id');
         // dd($kategoriStore);
 
         if($request->kategori){
-            $kategori = DB::table('kategoris')->where('slug', $request->kategori)->first();
+            $kategori =  KategoriProduk::where('id', $request->kategori)->first();
             if($kategori){
-                $produk = Product::whereIn('kategori_id', $kategoriStore)->where('kategori_id', $request->kategori)->get();
+                $produk = Product::where('kategori_id', $request->kategori)->get();
             }else{
                 $produk = Product::whereIn('kategori_id', $kategoriStore)->get();
             }
@@ -53,13 +54,13 @@ class ProdukController extends Controller
             $produk = Product::whereIn('kategori_id', $kategoriStore)->get();
         }
 
-        $kategoriStore =  DB::table('kategoris')->where('store_uuid', $request->store_id)->get();
+        $kategoriStore =  KategoriProduk::where('vendor_uuid', $cekStore->uuid_vendor)->get();
 
 
         return response()->json([
             'success' => true,
             'data' => $produk,
-            'kategori' => $kategoriStore
+            'kategori' => $kategoriStore,
         ]);
     }
 

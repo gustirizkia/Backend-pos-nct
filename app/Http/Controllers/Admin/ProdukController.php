@@ -37,7 +37,12 @@ class ProdukController extends Controller
      */
     public function create()
     {
-        //
+        $vendor = Vendor::where('user_uuid', auth()->user()->uuid)->first();
+        $kategori = KategoriProduk::where('vendor_uuid', $vendor->uuid)->get();
+        return view('pages.admin.produk.create', [
+            'kategori' => $kategori,
+            'vendor' => $vendor
+        ]);
     }
 
     /**
@@ -52,6 +57,7 @@ class ProdukController extends Controller
             'kategori_id' => 'required|exists:kategori_produks,id',
             'image' => 'required|image|max:4048', // 4mb
             'price' => 'required|integer',
+            'deskripsi' => 'required|string'
         ]);
 
         if($validasi->fails()){
@@ -69,10 +75,11 @@ class ProdukController extends Controller
             'kategori_id' => $request->kategori_id,
             'slug' => $cekSlug,
             'uuid' => generateUuid('products', 12),
-            'price' => $request->price
+            'price' => $request->price,
+            'deskripsi' => $request->deskripsi
         ]);
 
-        return redirect()->back()->with('success', "Berhasil tambah produk");
+        return redirect()->route('admin-produk.index')->with('success', "Berhasil tambah produk");
     }
 
     /**
